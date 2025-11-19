@@ -161,6 +161,7 @@ namespace УмныйСад
             return new ПоказанияСенсора(t, h, l, DateTime.Now);
         }
     }
+    //сделал фикс багов
     public class Контроллер
     {
         List<Сенсор> сенсоры;
