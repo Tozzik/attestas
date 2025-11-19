@@ -1,0 +1,89 @@
+# Скрипт команд Git для лабораторной (хронологический)
+
+# 1. Подготовка репозитория
+git init
+echo "# Умный сад — лабораторная работа" > README.md
+echo "bin/" > .gitignore
+echo "obj/" >> .gitignore
+git add .
+git commit -m "init: lab work - add project files"
+
+# Подключение удалённого репозитория (используем предоставленный URL)
+git branch -M main
+git remote add origin https://github.com/Tozzik/Lab_Git.git
+git push -u origin main
+
+# 2. Git-flow: создание веток
+git checkout -b develop
+# Для каждой функциональности создаём feature ветки:
+git checkout -b feature/sensors
+# работа над сенсорами (изменения в Program.cs)
+git add Program.cs
+git commit -m "feat(sensors): add sensor simulation"
+git checkout develop
+git merge --no-ff feature/sensors -m "merge: feature/sensors into develop"
+
+git checkout -b feature/plant-behavior
+# изменения в Program.cs
+git add Program.cs
+git commit -m "feat(plants): implement plant states and growth"
+git checkout develop
+git merge --no-ff feature/plant-behavior -m "merge: feature/plant-behavior into develop"
+
+# 3. Rebase и cherry-pick
+# Перебазируем feature/plant-behavior на актуальный develop
+git checkout feature/plant-behavior
+git rebase develop
+
+# Найдём полезный коммит в feature/sensors и перенесём его в develop
+# (вместо <commit-hash> подставьте реальный хеш)
+git checkout develop
+git cherry-pick <commit-hash>
+
+# 4. Откаты изменений
+# Откат конкретного коммита (создаёт новый commit, отменяющий указанный)
+git revert <commit-hash>
+
+# Мягкий reset (сохраняет изменения в рабочей директории)
+git reset --soft HEAD~1
+
+# Жёсткий reset (все локальные изменения удаляются)
+git reset --hard HEAD~1
+
+# Восстановление файла из HEAD
+git restore --source=HEAD -- Program.cs
+
+# 5. Git hooks (пример размещения в .git/hooks)
+# Создаём pre-commit, commit-msg, pre-push (см. содержимое в отчёте)
+# Сделать файлы исполняемыми:
+chmod +x .git/hooks/pre-commit .git/hooks/commit-msg .git/hooks/pre-push
+
+# 6. Конфликты: имитация и разрешение
+# На develop меняем одну строку в Program.cs и коммитим
+git checkout develop
+# ... edit Program.cs ...
+git add Program.cs
+git commit -m "chore: update readme line on develop"
+
+# В feature/conflict изменяем ту же строку иначе
+git checkout -b feature/conflict
+# ... edit Program.cs differently ...
+git add Program.cs
+git commit -m "feat: conflicting change"
+
+# Попытка merge вызовет конфликт:
+git checkout develop
+git merge feature/conflict
+
+# Разрешаем конфликт вручную, затем:
+git add Program.cs
+git commit -m "fix: resolve merge conflict between develop and feature/conflict"
+
+# 7. Теги
+git tag v1.0 -m "Release version 1.0"
+git push origin v1.0
+
+git tag v1.1-beta -m "Beta version with additional features"
+git push origin v1.1-beta
+
+# Конец скрипта
