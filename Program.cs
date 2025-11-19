@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 
 namespace УмныйСад
+    //добавил состояние растений 
 {
    public enum СостояниеРастения
     {
